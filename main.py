@@ -39,10 +39,12 @@ def main_job(group_id, url_given, token_given):
                 if int(changed_files_count) > 30:
                     comment_and_close_mr(mr, "Closing due to attempt to change too many files")
                     continue
-                last_created_comment_datetime = str(mr.notes.list(all=True)[0].created_at)
-                if days_diff(last_created_comment_datetime) >= 10:
-                    comment_and_close_mr(mr, "Closing due to no new comment added in the last 10 days")
-                    continue
+                comment_list=mr.notes.list(all=True)    
+                if comment_list:  ## checking if there are any comments at all in the list
+                    last_created_comment_datetime = str(comment_list[0].created_at) ## only need to check the first element as the list is sorted by creation date
+                    if days_diff(last_created_comment_datetime) >= 10:
+                        comment_and_close_mr(mr, "Closing due to no new comment added in the last 10 days")
+                        continue
     except:
         return False
     return True
